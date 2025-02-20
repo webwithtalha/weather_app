@@ -3,9 +3,24 @@
 import { useState } from 'react';
 import Image from 'next/image';
 
+interface WeatherData {
+  name: string;
+  main: {
+    temp: number;
+    humidity: number;
+  };
+  weather: Array<{
+    description: string;
+    icon: string;
+  }>;
+  wind: {
+    speed: number;
+  };
+}
+
 export default function Home() {
   const [city, setCity] = useState('');
-  const [weather, setWeather] = useState<any>(null);
+  const [weather, setWeather] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -24,15 +39,15 @@ export default function Home() {
       }
 
       setWeather(data);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch weather data');
     } finally {
       setLoading(false);
     }
   };
 
-  const getWeatherEmoji = (description: string) => {
-    const weatherMap: { [key: string]: string } = {
+  const getWeatherEmoji = (description: string): string => {
+    const weatherMap: Record<string, string> = {
       'clear sky': '☀️',
       'few clouds': '🌤️',
       'scattered clouds': '☁️',
