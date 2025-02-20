@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 
 export default function Home() {
@@ -8,7 +8,6 @@ export default function Home() {
   const [weather, setWeather] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,38 +45,6 @@ export default function Home() {
     };
     return weatherMap[description.toLowerCase()] || '🌡️';
   };
-
-  const getWeatherSound = (description: string) => {
-    const soundMap: { [key: string]: string } = {
-      'rain': '/sounds/rain.mp3',
-      'thunderstorm': '/sounds/thunder.mp3',
-      'clear sky': '/sounds/birds.mp3',
-      'snow': '/sounds/wind.mp3',
-      'clouds': '/sounds/wind-light.mp3'
-    };
-    
-    const weatherType = description.toLowerCase();
-    return Object.keys(soundMap).find(key => weatherType.includes(key));
-  };
-
-  useEffect(() => {
-    if (weather?.weather[0].description) {
-      const soundType = getWeatherSound(weather.weather[0].description);
-      if (soundType) {
-        const newAudio = new Audio(`/sounds/${soundType}.mp3`);
-        newAudio.loop = true;
-        setAudio(newAudio);
-        newAudio.play();
-      }
-    }
-    
-    return () => {
-      if (audio) {
-        audio.pause();
-        audio.currentTime = 0;
-      }
-    };
-  }, [weather]);
 
   return (
     <div className="max-w-md mx-auto">
